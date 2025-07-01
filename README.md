@@ -43,6 +43,11 @@ ERD/
 - `/docs/MVP_USER_STORIES.md`
 - `/docs/WIREFRAMES/`
 - `/docs/ERD/`
+- `/docs/ERD/HomestayERD-Spatie.png`
+
+## ERD Preview
+
+![ERD Diagram](/docs/ERD/HomestayERD-Spatie.png)
 
 ## Role-Based Access Control (RBAC)
 
