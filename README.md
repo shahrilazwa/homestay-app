@@ -44,6 +44,7 @@ ERD/
 - `/docs/WIREFRAMES/`
 - `/docs/ERD/`
 - `/docs/ERD/HomestayERD-Spatie.png`
+- `/docs/POLICIES.md`
 
 ## ERD Preview
 
