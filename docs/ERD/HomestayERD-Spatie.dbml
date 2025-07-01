@@ -1,0 +1,98 @@
+// Homestay Booking & Management App - ERD with Spatie RBAC
+
+Table users {
+  id int [pk, increment]
+  name varchar
+  email varchar [unique]
+  password varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table roles {
+  id int [pk, increment]
+  name varchar
+  guard_name varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table permissions {
+  id int [pk, increment]
+  name varchar
+  guard_name varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table model_has_roles {
+  role_id int [ref: > roles.id]
+  model_type varchar
+  model_id int [ref: > users.id] // if you only use User model
+  primary key (role_id, model_id, model_type)
+}
+
+Table model_has_permissions {
+  permission_id int [ref: > permissions.id]
+  model_type varchar
+  model_id int [ref: > users.id]
+  primary key (permission_id, model_id, model_type)
+}
+
+Table role_has_permissions {
+  permission_id int [ref: > permissions.id]
+  role_id int [ref: > roles.id]
+  primary key (permission_id, role_id)
+}
+
+Table homestays {
+  id int [pk, increment]
+  user_id int [ref: > users.id] // owner
+  title varchar
+  description text
+  location varchar
+  nightly_rate decimal
+  cover_image varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table homestay_images {
+  id int [pk, increment]
+  homestay_id int [ref: > homestays.id]
+  file_path varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table bookings {
+  id int [pk, increment]
+  user_id int [ref: > users.id] // guest
+  homestay_id int [ref: > homestays.id]
+  check_in_date date
+  check_out_date date
+  total_amount decimal
+  payment_status enum // 'pending', 'paid'
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table blocked_dates {
+  id int [pk, increment]
+  homestay_id int [ref: > homestays.id]
+  date date
+  reason varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id int [pk, increment]
+  booking_id int [ref: > bookings.id]
+  amount decimal
+  status enum // 'pending', 'paid', 'refunded'
+  payment_gateway varchar
+  transaction_id varchar
+  created_at timestamp
+  updated_at timestamp
+}
