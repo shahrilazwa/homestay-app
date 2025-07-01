@@ -1,144 +1,138 @@
 # Homestay Booking & Management App - MVP User Stories
 
-This document defines the core user stories for the MVP.
+This document defines the **core MVP user stories**, each mapped to **roles** and **permissions** (using Spatie Laravel Permission).  
 
 ---
 
-## User Stories with Tasks & Acceptance Criteria
+## User Roles
 
-### Manage Homestays
+- **Admin** — Manages everything: listings, bookings, payments, users.
+- **Owner** — Manages *their own* listings and related bookings.
+- **Guest** — Searches listings, books stays, pays online.
 
-1. **As an admin/owner, I want to create a homestay listing**
-   - **Tasks:**
-     - Add homestays table migration.
-     - Create listing form (title, description, price, location).
-     - Add image upload field.
-   - **Acceptance Criteria:**
-     - Owner can submit valid info and see the listing in the system.
+---
 
-2. **As an admin/owner, I want to upload images**
-   - **Tasks:**
-     - Integrate image upload with storage (local or S3).
-     - Display images on the listing page.
-   - **Acceptance Criteria:**
-     - Images are shown in gallery format; thumbnails display correctly.
+## User Stories
 
-3. **As an admin/owner, I want to edit or delete listings**
-   - **Tasks:**
-     - Create edit & delete routes/controllers.
-     - Add confirmation for deletion.
-   - **Acceptance Criteria:**
-     - Changes update correctly; deleted listings disappear from search.
+---
 
-4. **As an admin/owner, I want to set nightly prices and manually block dates**
-   - **Tasks:**
-     - Add price field and calendar.
-     - Allow admin to mark dates unavailable.
-   - **Acceptance Criteria:**
-     - Blocked dates cannot be booked.
+### Homestay Management
+
+1. **As an owner**, I want to **create a homestay listing** so that I can offer my property for booking.  
+   - **Role:** Owner, Admin  
+   - **Permission:** `create homestay`
+   - **Acceptance Criteria:** Owner can submit valid info (title, description, location, price) and see it listed.
+
+2. **As an owner**, I want to **upload images** for my listing so that guests can see what my property looks like.  
+   - **Role:** Owner, Admin  
+   - **Permission:** `update own homestay`
+   - **Acceptance Criteria:** Images are stored and displayed in a gallery on the detail page.
+
+3. **As an owner**, I want to **edit or delete my listings** so that I can keep them accurate or remove them if needed.  
+   - **Role:** Owner, Admin  
+   - **Permissions:** `update own homestay`, `delete own homestay` (`Admin` has `update any`/`delete any`)
+   - **Acceptance Criteria:** Owners can edit only their listings; Admins can edit or delete any listing.
+
+4. **As an owner**, I want to **block dates for availability** so that I don’t get bookings when my homestay is not available.  
+   - **Role:** Owner, Admin  
+   - **Permission:** `manage homestay availability`
+   - **Acceptance Criteria:** Dates are blocked on the calendar and guests cannot book those dates.
 
 ---
 
 ### Booking System
 
-5. **As a guest, I want to search homestays by location and date**
-   - **Tasks:**
-     - Build search form with filters.
-     - Connect search to listings DB.
-   - **Acceptance Criteria:**
-     - Only available listings show for selected dates.
+5. **As a guest**, I want to **search homestays by location and date** so that I can find available stays.  
+   - **Role:** Guest  
+   - **Permission:** `view homestay`
+   - **Acceptance Criteria:** Search returns only available listings for the selected date range.
 
-6. **As a guest, I want to view a homestay’s details**
-   - **Tasks:**
-     - Create listing detail page.
-     - Display all info: images, description, price, availability.
-   - **Acceptance Criteria:**
-     - Page loads with accurate data.
+6. **As a guest**, I want to **view homestay details** so that I know what’s included before booking.  
+   - **Role:** Guest  
+   - **Permission:** `view homestay`
+   - **Acceptance Criteria:** Details include images, description, price, amenities, and availability calendar.
 
-7. **As a guest, I want to make a booking for specific dates**
-   - **Tasks:**
-     - Build booking form.
-     - Validate date range & guest info.
-     - Store booking in DB.
-   - **Acceptance Criteria:**
-     - Valid booking creates reservation and reduces availability.
+7. **As a guest**, I want to **make a booking** for specific dates so that I can reserve my stay.  
+   - **Role:** Guest  
+   - **Permission:** `create booking`
+   - **Acceptance Criteria:** Guest can select dates, provide contact info, and see a booking summary.
 
-8. **As a guest, I want to receive a booking confirmation email**
-   - **Tasks:**
-     - Set up mail config.
-     - Trigger email on booking creation.
-   - **Acceptance Criteria:**
-     - Email contains booking details.
+8. **As a guest**, I want to **receive a booking confirmation email** so that I know my reservation is secure.  
+   - **Role:** Guest  
+   - **Permission:** `create booking` (triggers notification)
+   - **Acceptance Criteria:** Email contains booking ID, dates, amount paid.
 
-9. **As an admin/owner, I want to see all bookings in a calendar view**
-   - **Tasks:**
-     - Add bookings table migration.
-     - Create calendar UI.
-     - Link bookings to dates.
-   - **Acceptance Criteria:**
-     - Calendar shows booked/unavailable dates per listing.
+9. **As an owner**, I want to **view all bookings for my homestays** so that I can manage check-ins.  
+   - **Role:** Owner, Admin  
+   - **Permissions:** `view any booking` (Admin) / `view own booking` (Owner)
+   - **Acceptance Criteria:** Owner sees only bookings for their listings.
+
+10. **As a guest**, I want to **cancel my booking** so that I can change my travel plans.  
+   - **Role:** Guest  
+   - **Permission:** `cancel own booking`
+   - **Acceptance Criteria:** Booking status updates and owner is notified.
 
 ---
 
-### Payment
+### Payments
 
-10. **As a guest, I want to pay for my booking online**
-    - **Tasks:**
-      - Integrate Stripe or chosen gateway.
-      - Create checkout page.
-    - **Acceptance Criteria:**
-      - Successful payment marks booking as paid.
+11. **As a guest**, I want to **pay for my booking online** so that my reservation is guaranteed.  
+   - **Role:** Guest  
+   - **Permission:** `make payment`
+   - **Acceptance Criteria:** Stripe payment works and status changes to “paid”.
 
-11. **As a guest, I want to receive a payment receipt via email**
-    - **Tasks:**
-      - Extend email logic to include payment receipt.
-    - **Acceptance Criteria:**
-      - Email includes transaction ID, amount, booking details.
+12. **As a guest**, I want to **receive a payment receipt via email** so that I have proof of payment.  
+   - **Role:** Guest  
+   - **Permission:** `make payment` (triggers receipt)
+   - **Acceptance Criteria:** Email includes transaction ID and booking info.
 
----
-
-### User & Admin
-
-12. **As a guest, I want to register and log in**
-    - **Tasks:**
-      - Use Laravel Breeze/Jetstream for auth.
-    - **Acceptance Criteria:**
-      - Guests can sign up, log in, log out.
-
-13. **As an admin/owner, I want to log in to an admin dashboard**
-    - **Tasks:**
-      - Create separate admin route/middleware.
-      - Dashboard shows listings and bookings.
-    - **Acceptance Criteria:**
-      - Only admin/owner can access dashboard.
-
-14. **As an admin/owner, I want to get notifications of new bookings**
-    - **Tasks:**
-      - Trigger email notification on new booking.
-    - **Acceptance Criteria:**
-      - Admin receives email with booking info.
+13. **As an admin**, I want to **issue refunds** when necessary so that guests are refunded correctly.  
+   - **Role:** Admin  
+   - **Permission:** `issue refund`
+   - **Acceptance Criteria:** Refund is processed via Stripe and status updates in system.
 
 ---
 
-### 📨 Notifications
+### Users & RBAC
 
-15. **As a guest, I want to get reminders for upcoming stays**
-    - **Tasks:**
-      - Schedule email reminders (optional for MVP).
-    - **Acceptance Criteria:**
-      - Guests receive reminder X days before check-in.
+14. **As a guest**, I want to **register and log in** so that I can view my bookings.  
+   - **Role:** Guest  
+   - **Permission:** `view own booking`
+   - **Acceptance Criteria:** Auth works via Laravel Breeze/Jetstream.
+
+15. **As an admin**, I want to **manage user roles** so that I can control who does what.  
+   - **Role:** Admin  
+   - **Permission:** `assign roles`
+   - **Acceptance Criteria:** Admin can assign/remove roles to/from users.
+
+16. **As an admin**, I want to **manage users** so that I can ban or reactivate accounts.  
+   - **Role:** Admin  
+   - **Permission:** `manage users`
+   - **Acceptance Criteria:** Admin sees user list, can deactivate/reactivate.
+
+17. **As an admin**, I want to **view a dashboard** with all listings, bookings, and payments so that I can oversee operations.  
+   - **Role:** Admin  
+   - **Permissions:** `view any homestay`, `view any booking`, `view any payment`
+   - **Acceptance Criteria:** Dashboard aggregates core stats.
 
 ---
 
-## Suggested Sprint Milestones
+## Sprint Milestones
 
-| Sprint | Focus                                             |
-|--------|---------------------------------------------------|
-| Sprint 1 | Auth & basic admin dashboard                    |
-| Sprint 2 | CRUD for listings + image uploads               |
-| Sprint 3 | Search, view listings, booking form             |
-| Sprint 4 | Payments integration + email notifications      |
-| Sprint 5 | Booking calendar for admin, polish & test       |
+| Sprint   | Focus                                              |
+|----------|----------------------------------------------------|
+| Sprint 0 | Auth setup, install Spatie, seed roles & permissions |
+| Sprint 1 | Owner CRUD for homestays & image uploads           |
+| Sprint 2 | Guest search & booking flow                        |
+| Sprint 3 | Payments (Stripe) + booking confirmation emails    |
+| Sprint 4 | Admin dashboard, role management, test RBAC flows  |
 
 ---
 
+## Notes
+
+- Use **Spatie’s `@role` & `@can`** Blade directives for conditional UI.
+- Apply **middleware** to protect routes by permission.
+- Implement **policies** for “own vs any” actions.
+
+---
